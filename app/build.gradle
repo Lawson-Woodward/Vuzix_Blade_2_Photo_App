@@ -1,0 +1,53 @@
+plugins {
+    id("com.chaquo.python")
+}
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.vuzix.sample.video_hw_encoder_async"
+        minSdkVersion 27
+        targetSdkVersion 33
+        versionCode 3
+        versionName "1.0.2"
+
+        ndk {
+            // On Apple silicon, you can omit x86_64.
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+
+        flavorDimensions "pyVersion"
+        productFlavors {
+            create("py310") { dimension = "pyVersion" }
+            create("py311") { dimension = "pyVersion" }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    namespace 'com.vuzix.sample.video_encoder'
+}
+
+chaquopy {
+    defaultConfig {
+        buildPython("C:/Users/rlaws/AppData/Local/Programs/Python/Python310/python.exe")
+        version = "3.10"
+    }
+    productFlavors {
+        getByName("py310") { version = "3.10" }
+        getByName("py311") { version = "3.11" }
+    }
+    sourceSets {
+        getByName("main") {
+            srcDir("src/main/python")
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
